@@ -6,8 +6,10 @@ ID tokens last for 1 hour (set by Firebase).
 
 ## Setup
 
-1. Install [firebase_admin](https://firebase.google.com/docs/admin/setup#add_the_sdk): `
-$ pip install --user python_firebase`
+1. Run
+```
+pip install -r requirements.txt
+```
 2. Fill out the configuration constants in get_firebase_id_token.py
 
 ## Usage

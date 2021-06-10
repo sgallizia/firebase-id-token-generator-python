@@ -1,7 +1,6 @@
 import argparse
 import json
-import urllib2
-
+import requests
 import firebase_admin
 from firebase_admin import credentials, auth
 
@@ -21,31 +20,24 @@ default_app = firebase_admin.initialize_app(cred, {"databaseURL": DATABASE_URL})
 
 def get_token(uid):
   """Return a Firebase ID token dict from a user id (UID).
-
   Returns:
     dict: Keys are "kind", "idToken", "refreshToken", and "expiresIn".
     "expiresIn" is in seconds.
-
     The return dict matches the response payload described in
     https://firebase.google.com/docs/reference/rest/auth/#section-verify-custom-token
-
     The actual token is at get_token(uid)["idToken"].
   """
   token = auth.create_custom_token(uid)
   data = {
-    'token': token,
+    'token': token.decode(),
     'returnSecureToken': True
   }
 
-  url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty" \
-        "/verifyCustomToken?key={}".format(API_KEY)
+  url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key={API_KEY}"
 
-  req = urllib2.Request(url,
-                        json.dumps(data),
-                        {'Content-Type': 'application/json'})
-  response = urllib2.urlopen(req).read()
+  response = requests.post(url, json=data)
 
-  return json.loads(response)
+  return response.json()
 
 
 if __name__ == "__main__":
@@ -54,4 +46,4 @@ if __name__ == "__main__":
   parser.add_argument("uid", help="Firebase User ID (UID)", type=str)
   args = parser.parse_args()
 
-  print get_token(args.uid)["idToken"]
+  print(get_token(args.uid)["idToken"])

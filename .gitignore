@@ -102,3 +102,6 @@ ENV/
 
 # PyCharm
 .idea/
+service_account_key.json
+.vscode/launch.json
+.vscode/settings.json
